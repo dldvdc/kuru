@@ -1,0 +1,118 @@
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+name: kuru-infra-dev
+
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+services:
+
+  db:
+    container_name: kuru-db
+    image: docker.io/library/postgres:17.6-alpine
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kuru}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kuru}
+      POSTGRES_DB: ${POSTGRES_DB:-kuru}
+
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+    volumes:
+      - kuru_db_data:/var/lib/postgresql/data:Z
+
+    networks:
+      - kuru-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kuru} -d ${POSTGRES_DB:-kuru}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+  blob:
+    container_name: kuru-storage
+    image: ${MINIO_IMAGE:-quay.io/minio/minio:RELEASE.2025-02-28T09-55-16Z}
+    restart: unless-stopped
+
+    command: server /data --console-address ":9001"
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+
+    volumes:
+      - kuru_blob_data:/data:Z
+
+    networks:
+      - kuru-network
+
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+
+  blob-init:
+
+    image: docker.io/minio/mc:latest
+    restart: "no"
+
+    depends_on:
+      - blob
+
+    entrypoint: [""]
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        until /usr/bin/mc alias set kuru http://blob:9000 ${MINIO_ROOT_USER:-minio} ${MINIO_ROOT_PASSWORD:-minioadmin}; do
+          echo "waiting for minio..."
+          sleep 2
+        done
+        /usr/bin/mc mb --ignore-existing kuru/${MEDIAS_S3_BUCKET_TEMP:-kuru-bucket}
+        echo "minio bucket initialized"
+
+    networks:
+      - kuru-network
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+volumes:
+  kuru_db_data: {}
+  kuru_blob_data: {}
+
+# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
+
+networks:
+  kuru-network:
+    driver: bridge

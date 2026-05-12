@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: kuru
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/kuru}
+    username: ${SPRING_DATASOURCE_USERNAME:kuru}
+    password: ${SPRING_DATASOURCE_PASSWORD:kuru}
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    clean-disabled: true
+    clean-on-validation-error: false
+    baseline-version: 0
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  kuru:
+    storage:
+      endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+      access-key: ${STORAGE_ACCESS_KEY:minio}
+      secret-key: ${STORAGE_SECRET_KEY:minioadmin}
+      path-style-access: ${STORAGE_PATH_STYLE:true}
+      bucket: ${STORAGE_BUCKET:kuru-bucket}
+
+  server:
+    port: ${PORT:8080}
