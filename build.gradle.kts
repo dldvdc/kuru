@@ -34,13 +34,11 @@ dependencies {
 
 	implementation("org.jdbi:jdbi3-spring5:${jdbiVersion}")
 	implementation("org.jdbi:jdbi3-kotlin:${jdbiVersion}")
-	implementation("org.jdbi:jdbi3-postgres:${jdbiVersion}")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
-	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("software.amazon.awssdk:s3:${awsSdkVersion}")
 	implementation("com.github.f4b6a3:ulid-creator:${ulidCreatorVersion}")
 
-	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("org.xerial:sqlite-jdbc")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

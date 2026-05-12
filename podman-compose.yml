@@ -6,39 +6,6 @@ name: kuru-infra-dev
 
 services:
 
-  db:
-    container_name: kuru-db
-    image: docker.io/library/postgres:17.6-alpine
-    restart: unless-stopped
-
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-kuru}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kuru}
-      POSTGRES_DB: ${POSTGRES_DB:-kuru}
-
-    ports:
-      - "${DB_PORT:-5432}:5432"
-
-    volumes:
-      - kuru_db_data:/var/lib/postgresql/data:Z
-
-    networks:
-      - kuru-network
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kuru} -d ${POSTGRES_DB:-kuru}"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-# · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
-
   blob:
     container_name: kuru-storage
     image: ${MINIO_IMAGE:-quay.io/minio/minio:RELEASE.2025-02-28T09-55-16Z}
@@ -108,7 +75,6 @@ services:
 # · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #
 
 volumes:
-  kuru_db_data: {}
   kuru_blob_data: {}
 
 # · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · #

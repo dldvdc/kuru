@@ -38,3 +38,8 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### SQLite (dev default: data/kuru.db) ###
+/data/
+*.db-shm
+*.db-wal
