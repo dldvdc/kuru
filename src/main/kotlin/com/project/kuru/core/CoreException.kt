@@ -32,4 +32,11 @@ sealed class CoreException(
         val reason: String
     ) : CoreException(field, "$field: $reason")
 
+    companion object {
+        /** Relance une CoreException ; sinon InvalidFormat pour le champ donné. */
+        fun invalidFormat(field: String, cause: Exception): Nothing {
+            if (cause is CoreException) throw cause
+            throw InvalidFormat(field)
+        }
+    }
 }

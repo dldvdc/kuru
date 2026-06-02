@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
 	kotlin("jvm") version "2.3.21"
 	kotlin("plugin.spring") version "2.3.21"
@@ -8,7 +10,6 @@ plugins {
 group = "bo.kuru"
 version = "0.0.1-SNAPSHOT"
 val kotlinLoggingVersion by extra("8.0.01")
-val jdbiVersion by extra("3.52.0")
 val awsSdkVersion by extra("2.42.33")
 val ulidCreatorVersion by extra("5.2.4")
 
@@ -32,8 +33,6 @@ dependencies {
 	implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
 	implementation("tools.jackson.module:jackson-module-kotlin")
 
-	implementation("org.jdbi:jdbi3-spring5:${jdbiVersion}")
-	implementation("org.jdbi:jdbi3-kotlin:${jdbiVersion}")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("software.amazon.awssdk:s3:${awsSdkVersion}")
 	implementation("com.github.f4b6a3:ulid-creator:${ulidCreatorVersion}")
@@ -52,6 +51,14 @@ kotlin {
 	}
 }
 
+/** sqlite-jdbc charge une lib native via System::load ; requis depuis les JVM qui restreignent l’accès natif. */
+val sqliteJdbcJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+	jvmArgs(sqliteJdbcJvmArgs)
+}
+
+tasks.named<BootRun>("bootRun") {
+	jvmArgs = sqliteJdbcJvmArgs
 }

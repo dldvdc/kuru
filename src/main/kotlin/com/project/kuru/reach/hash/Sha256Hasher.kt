@@ -1,4 +1,4 @@
-package com.project.kuru.core.hash
+package com.project.kuru.reach.hash
 
 import java.nio.file.Files
 import java.nio.file.Path

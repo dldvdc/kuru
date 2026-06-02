@@ -1,4 +1,4 @@
-package com.project.kuru.storage
+package com.project.kuru.store
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean

@@ -22,16 +22,35 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 300MB
+      max-request-size: 300MB
+      file-size-threshold: 2MB
 
   kuru:
+    cors:
+      # Origines séparées par des virgules (ex. front Cloudflare Pages + dev local).
+      allowed-origins: ${KURU_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+    video:
+      ffprobe-path: ${KURU_FFPROBE_PATH:ffprobe}
+      max-duration-seconds: 300
+      max-width: 3840
+      max-height: 2160
+    image:
+      max-size-bytes: 52428800
+      max-memory-bytes: 536870912
+      bytes-per-pixel-estimate: 4
+      buffer-size: 8192
     storage:
       endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
       access-key: ${STORAGE_ACCESS_KEY:minio}
       secret-key: ${STORAGE_SECRET_KEY:minioadmin}
       path-style-access: ${STORAGE_PATH_STYLE:true}
       bucket: ${STORAGE_BUCKET:kuru-bucket}
+      staging-bucket: ${STORAGE_STAGING_BUCKET:kuru-staging}
 
-  server:
-    port: ${PORT:8080}
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    com.project.kuru: DEBUG

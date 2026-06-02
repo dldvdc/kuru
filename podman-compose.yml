@@ -59,7 +59,8 @@ services:
           echo "waiting for minio..."
           sleep 2
         done
-        /usr/bin/mc mb --ignore-existing kuru/${MEDIAS_S3_BUCKET_TEMP:-kuru-bucket}
+        /usr/bin/mc mb --ignore-existing kuru/${STORAGE_BUCKET:-kuru-bucket}
+        /usr/bin/mc mb --ignore-existing kuru/${STORAGE_STAGING_BUCKET:-kuru-staging}
         echo "minio bucket initialized"
 
     networks:

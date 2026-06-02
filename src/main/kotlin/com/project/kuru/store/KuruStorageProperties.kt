@@ -1,4 +1,4 @@
-package com.project.kuru.storage
+package com.project.kuru.store
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
@@ -9,4 +9,5 @@ data class KuruStorageProperties(
     val secretKey: String,
     val pathStyleAccess: Boolean = true,
     val bucket: String,
+    val stagingBucket: String,
 )

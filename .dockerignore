@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gradle
+.kotlin
+.idea
+build
+data
+*.db
+*.db-shm
+*.db-wal
+out
+bin
+*.md
+podman-compose.yml
+Dockerfile

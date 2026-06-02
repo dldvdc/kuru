@@ -1,7 +1,8 @@
 package com.project.kuru.flow
 
-import com.project.kuru.core.image.RawImageFile
+import com.project.kuru.core.image.VerifiedImage
 
 fun interface ImageStore {
-    fun store(image: RawImageFile, objectKey: String)
+
+    fun promote(stagingKey: String, finalKey: String, image: VerifiedImage)
 }
