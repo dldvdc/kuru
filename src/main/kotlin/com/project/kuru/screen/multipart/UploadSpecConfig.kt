@@ -10,21 +10,23 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(KuruImageProperties::class, KuruVideoProperties::class)
-class UploadPartPreflightConfig {
+class UploadSpecConfig {
 
     @Bean
-    fun imageUploadPartPreflightSpec(props: KuruImageProperties): UploadPartPreflight.Spec =
-        UploadPartPreflight.Spec(
+    fun imageUploadSpec(props: KuruImageProperties): UploadSpec =
+        UploadSpec(
             field = "image",
             maxSizeBytes = props.maxSizeBytes,
             minSizeBytes = ImageFormat.maxHeaderSize,
+            allowedContentTypePrefix = "image/",
         )
 
     @Bean
-    fun videoUploadPartPreflightSpec(props: KuruVideoProperties): UploadPartPreflight.Spec =
-        UploadPartPreflight.Spec(
+    fun videoUploadSpec(props: KuruVideoProperties): UploadSpec =
+        UploadSpec(
             field = "video",
             maxSizeBytes = props.maxSizeBytes,
             minSizeBytes = VideoFormat.maxHeaderSize,
+            allowedContentTypePrefix = "video/",
         )
 }
