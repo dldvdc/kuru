@@ -40,6 +40,6 @@ ENV KURU_SQLITE_FILE=/app/data/kuru.db \
     KURU_FFPROBE_PATH=ffprobe \
     PORT=8080
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["java", "--enable-native-access=ALL-UNNAMED", "-jar", "/app/app.jar"]
