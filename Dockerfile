@@ -2,17 +2,20 @@
 
 FROM eclipse-temurin:25-jdk-noble AS build
 
+# VPS ~2 Go : limiter Gradle + pas de daemon dans le conteneur de build
+ENV GRADLE_OPTS="-Xmx768m -XX:+UseParallelGC -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+
 WORKDIR /workspace
 
 COPY gradlew gradlew.bat settings.gradle.kts build.gradle.kts ./
 COPY gradle gradle
 
 RUN chmod +x gradlew \
-    && ./gradlew dependencies --no-daemon --quiet
+    && ./gradlew dependencies --no-daemon
 
 COPY src src
 
-RUN ./gradlew bootJar -x test --no-daemon --quiet
+RUN ./gradlew bootJar -x test --no-daemon
 
 # ─────────────────────────────────────────────────────────────────────────────
 
