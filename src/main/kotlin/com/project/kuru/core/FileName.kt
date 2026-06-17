@@ -76,5 +76,6 @@ value class FileName private constructor(val value: String) {
         val finalBase = tempBase.ifBlank { "file" }
 
         return if (ext.isBlank()) finalBase else "$finalBase.${ext.lowercase(Locale.ROOT)}"
+
     }
 }

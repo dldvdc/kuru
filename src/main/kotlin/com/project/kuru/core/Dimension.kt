@@ -1,4 +1,4 @@
-package com.project.kuru.core.image
+package com.project.kuru.core
 
 data class Dimension(val width: Int, val height: Int) {
     init {

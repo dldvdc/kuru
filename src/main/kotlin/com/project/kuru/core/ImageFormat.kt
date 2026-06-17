@@ -1,4 +1,4 @@
-package com.project.kuru.core.image
+package com.project.kuru.core
 
 enum class ImageFormat(
     val mimeType: String,

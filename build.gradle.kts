@@ -27,7 +27,7 @@ repositories {
 dependencies {
 
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-
+	implementation("io.github.rctcwyvrn:blake3:1.3")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")

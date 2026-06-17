@@ -13,3 +13,6 @@ bin
 *.md
 podman-compose.yml
 Dockerfile
+.env
+.env.*
+!.env.example

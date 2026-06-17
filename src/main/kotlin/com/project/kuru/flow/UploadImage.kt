@@ -2,7 +2,6 @@ package com.project.kuru.flow
 
 import com.github.f4b6a3.ulid.UlidCreator
 import com.project.kuru.flow.image.AcceptedImage
-import com.project.kuru.flow.image.toVerifiedImage
 import com.project.kuru.reach.storage.StagingStore
 import com.project.kuru.store.ObjectKeys
 import com.project.kuru.store.UploadedObjectRepository
@@ -21,20 +20,19 @@ class UploadImage(
 
     operator fun invoke(cmd: Cmd) {
         val accepted = cmd.image
-        if (uploadedObjects.findObjectKeyByContentSha256(accepted.contentSha256) != null) {
+        val entry = accepted.entry
+        if (uploadedObjects.findObjectKeyByContentSha256(entry.contentSha256) != null) {
             stagingStore.delete(accepted.stagingKey)
             return
         }
 
-        val verified = accepted.toVerifiedImage()
-        val objectKey = ObjectKeys.upload(UlidCreator.getUlid().toString(), verified.extension)
-        imageStore.promote(accepted.stagingKey, objectKey, verified)
+        val objectKey = ObjectKeys.upload(UlidCreator.getUlid().toString(), entry.extension)
+        imageStore.promote(accepted.stagingKey, objectKey, entry)
         uploadedObjects.insert(
-            contentSha256 = verified.contentSha256,
+            contentSha256 = entry.contentSha256,
             objectKey = objectKey,
-            sizeBytes = verified.sizeBytes,
-            originalFilename = verified.originalFileName,
+            sizeBytes = entry.sizeBytes,
+            originalFilename = entry.originalFileName,
         )
-        Thread.sleep(500)
     }
 }

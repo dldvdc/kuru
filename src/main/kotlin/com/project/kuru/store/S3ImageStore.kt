@@ -1,7 +1,7 @@
 package com.project.kuru.store
 
-import com.project.kuru.core.image.VerifiedImage
 import com.project.kuru.flow.ImageStore
+import com.project.kuru.flow.image.CatalogEntry
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest
@@ -13,14 +13,14 @@ class S3ImageStore(
     private val props: KuruStorageProperties,
 ) : ImageStore {
 
-    override fun promote(stagingKey: String, finalKey: String, image: VerifiedImage) {
+    override fun promote(stagingKey: String, finalKey: String, entry: CatalogEntry) {
         s3.copyObject(
             CopyObjectRequest.builder()
                 .sourceBucket(props.stagingBucket)
                 .sourceKey(stagingKey)
                 .destinationBucket(props.bucket)
                 .destinationKey(finalKey)
-                .contentType(image.mime)
+                .contentType(entry.mime)
                 .build(),
         )
         s3.deleteObject(

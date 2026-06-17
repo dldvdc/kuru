@@ -3,9 +3,10 @@ package com.project.kuru.reach.ingest
 import com.github.f4b6a3.ulid.UlidCreator
 import com.project.kuru.core.CoreException
 import com.project.kuru.flow.image.AcceptedImage
+import com.project.kuru.flow.image.CatalogEntry
 import com.project.kuru.reach.file.PartCopy
-import com.project.kuru.reach.file.image.ImageMetadata
 import com.project.kuru.reach.file.image.ImageIoMetadataReader
+import com.project.kuru.reach.file.image.IngestGuard
 import com.project.kuru.reach.hash.Sha256Hasher
 import com.project.kuru.reach.ingest.KuruImageProperties
 import com.project.kuru.reach.mime.image.ImageFormat
@@ -46,7 +47,7 @@ class ReachImageIngestor(
             val copy = copyToTemp(stream, tempFile)
                 .requireHeader()
             val format = copy.sniffFormat()
-            val metadata = probeMetadata(tempFile, format)
+            val guard = probeGuard(tempFile, format)
                 .requireDecodeBudget()
             val contentSha256 = Sha256Hasher.hash(tempFile)
             val extension = format.storageExtension(upload.fileName.value)
@@ -58,15 +59,14 @@ class ReachImageIngestor(
                 contentLength = copy.size,
             )
             return AcceptedImage(
-                originalFileName = upload.fileName.value,
-                mime = format.mime,
-                extension = extension,
-                sizeBytes = copy.size,
-                contentSha256 = contentSha256,
                 stagingKey = stagingKey,
-                dimensions = metadata.dimensions,
-                color = metadata.color,
-                animated = metadata.animated,
+                entry = CatalogEntry(
+                    originalFileName = upload.fileName.value,
+                    mime = format.mime,
+                    extension = extension,
+                    sizeBytes = copy.size,
+                    contentSha256 = contentSha256,
+                ),
             )
         } finally {
             Files.deleteIfExists(tempFile)
@@ -98,10 +98,10 @@ class ReachImageIngestor(
     private fun PartCopy.Result.sniffFormat(): ImageFormat =
         imageMimeSniffer.sniffImage(header) ?: throw CoreException.InvalidFormat(KIND)
 
-    private fun probeMetadata(tempFile: Path, format: ImageFormat) =
+    private fun probeGuard(tempFile: Path, format: ImageFormat): IngestGuard =
         imageIoMetadataReader.read(tempFile, format)
 
-    private fun ImageMetadata.requireDecodeBudget(): ImageMetadata =
+    private fun IngestGuard.requireDecodeBudget(): IngestGuard =
         apply {
             val estBytes = dimensions.totalPixels * props.bytesPerPixelEstimate
             if (estBytes > props.maxMemoryBytes) {
