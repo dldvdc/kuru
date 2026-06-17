@@ -15,4 +15,4 @@ podman-compose.yml
 Dockerfile
 .env
 .env.*
-!.env.example
+!.env.tunnel.example
