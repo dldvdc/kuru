@@ -1,15 +1,25 @@
 services:
-  api:
+
+  kuru-api:
     build: .
     image: kuru-backend:local
     container_name: kuru-api
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8080:8080"
     volumes:
       - kuru-data:/app/data
     env_file:
       - .env.prod
+
+  kuru-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: kuru-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    env_file: .env
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    depends_on:
+      - kuru-api
 
 volumes:
   kuru-data:
