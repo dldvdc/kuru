@@ -14,10 +14,9 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: kuru-tunnel
     restart: unless-stopped
-    # TUNNEL_TOKEN dans .env.tunnel (voir .env.tunnel.example)
     command: tunnel --no-autoupdate run
     env_file:
-      - .env.tunnel
+      - .env.prod
     depends_on:
       - kuru-api
 
