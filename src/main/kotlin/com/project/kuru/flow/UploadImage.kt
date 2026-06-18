@@ -1,6 +1,6 @@
 package com.project.kuru.flow
 
-import com.github.f4b6a3.ulid.UlidCreator
+import com.github.f4b6a3.tsid.TsidCreator
 import com.project.kuru.core.toHexString
 import com.project.kuru.flow.image.AcceptedImage
 import com.project.kuru.reach.storage.StagingStore
@@ -41,7 +41,7 @@ class UploadImage(
             return
         }
 
-        val objectKey = ObjectKeys.upload(TsidCreatot entry.extension)
+        val objectKey = ObjectKeys.upload(TsidCreator.getTsid256().toString(), entry.extension)
         log.debug { "flow[upload-image]: promote staging → final key=$objectKey" }
 
         imageStore.promote(accepted.stagingKey, objectKey, entry)

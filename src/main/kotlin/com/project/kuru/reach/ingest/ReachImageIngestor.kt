@@ -1,7 +1,6 @@
 package com.project.kuru.reach.ingest
 
 import com.github.f4b6a3.tsid.TsidCreator
-import com.github.f4b6a3.ulid.UlidCreator
 import com.project.kuru.core.CoreException
 import com.project.kuru.core.toHexString
 import com.project.kuru.flow.image.AcceptedImage
