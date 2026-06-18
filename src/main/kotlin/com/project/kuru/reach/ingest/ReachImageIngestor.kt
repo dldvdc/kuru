@@ -1,5 +1,6 @@
 package com.project.kuru.reach.ingest
 
+import com.github.f4b6a3.tsid.TsidCreator
 import com.github.f4b6a3.ulid.UlidCreator
 import com.project.kuru.core.CoreException
 import com.project.kuru.core.toHexString
@@ -9,9 +10,8 @@ import com.project.kuru.reach.file.PartCopy
 import com.project.kuru.reach.file.image.ImageIoMetadataReader
 import com.project.kuru.reach.file.image.IngestGuard
 import com.project.kuru.reach.hash.Sha256Hasher
-import com.project.kuru.reach.ingest.KuruImageProperties
 import com.project.kuru.reach.mime.image.ImageFormat
-import com.project.kuru.reach.mime.image.ImageMimeSniffer
+import com.project.kuru.reach.file.ImageMimeSniffer
 import com.project.kuru.reach.storage.StagingStore
 import com.project.kuru.screen.ingest.ImageIngestor
 import com.project.kuru.screen.multipart.ValidatedUpload
@@ -71,7 +71,7 @@ class ReachImageIngestor(
             log.debug { "ingest[image]: SHA-256=${contentSha256.toHexString()}" }
 
             val extension = format.storageExtension(upload.fileName.value)
-            val stagingKey = ObjectKeys.staging(UlidCreator.getUlid().toString(), extension)
+            val stagingKey = ObjectKeys.staging(TsidCreator.getTsid256().toString(), extension)
             log.debug { "ingest[image]: PUT staging key=$stagingKey" }
 
             stagingStore.put(

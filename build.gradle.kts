@@ -12,7 +12,7 @@ version = "0.0.1-SNAPSHOT"
 val kotlinLoggingVersion by extra("8.0.01")
 val awsSdkVersion by extra("2.42.33")
 val ulidCreatorVersion by extra("5.2.4")
-
+val tsidCreatorVersion = "5.2.6"
 kotlin {
 	jvmToolchain(25)
 	compilerOptions {
@@ -36,6 +36,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("software.amazon.awssdk:s3:${awsSdkVersion}")
 	implementation("com.github.f4b6a3:ulid-creator:${ulidCreatorVersion}")
+	implementation("com.github.f4b6a3:tsid-creator:${tsidCreatorVersion}")
 
 	runtimeOnly("org.xerial:sqlite-jdbc")
 

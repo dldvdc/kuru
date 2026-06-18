@@ -28,7 +28,6 @@ spring:
 
   kuru:
     cors:
-      # Origines séparées par des virgules (ex. front Cloudflare Pages + dev local).
       allowed-origins: ${KURU_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
     video:
       ffprobe-path: ${KURU_FFPROBE_PATH:ffprobe}
