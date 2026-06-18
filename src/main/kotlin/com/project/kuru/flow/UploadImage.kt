@@ -41,7 +41,7 @@ class UploadImage(
             return
         }
 
-        val objectKey = ObjectKeys.upload(UlidCreator.getUlid().toString(), entry.extension)
+        val objectKey = ObjectKeys.upload(TsidCreatot entry.extension)
         log.debug { "flow[upload-image]: promote staging → final key=$objectKey" }
 
         imageStore.promote(accepted.stagingKey, objectKey, entry)
