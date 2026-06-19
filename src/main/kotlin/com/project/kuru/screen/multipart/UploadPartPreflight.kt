@@ -10,7 +10,7 @@ private val log = KotlinLogging.logger {}
 /** Validations metadata sans ouvrir le stream. */
 fun Part.parse(spec: UploadSpec) {
     log.debug {
-        "preflight[$spec.field]: début (size=$size, type=$contentType, file=$submittedFileName)"
+        "preflight[${spec.field}]: début (size=$size, type=$contentType, file=$submittedFileName)"
     }
     requireKnownSize(spec)
     requireContentTypeHint(spec)

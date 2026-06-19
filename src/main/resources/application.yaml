@@ -35,7 +35,7 @@ spring:
       max-width: 3840
       max-height: 2160
     image:
-      max-size-bytes: 52428800
+      max-size-bytes: 104857600   # 100 Mo — TIFF scans ; servlet multipart autorise jusqu'à 300 Mo
       max-memory-bytes: 536870912
       bytes-per-pixel-estimate: 4
     storage:
