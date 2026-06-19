@@ -13,6 +13,7 @@ import com.project.kuru.screen.ingest.ImageIngestor
 import com.project.kuru.screen.multipart.ValidatedUpload
 import com.project.kuru.store.ObjectKeys
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.ByteArrayInputStream
 import java.io.SequenceInputStream
 
 private val log = KotlinLogging.logger {}
@@ -39,27 +40,28 @@ class FileIngestor(
     }
 
     private fun acceptFromStream(upload: ValidatedUpload, raw: java.io.InputStream): AcceptedImage {
-        val header = raw.readNBytes(minHeaderSize)
-        if (header.size < minHeaderSize) {
-            log.warn { "ingest[image]: en-tête trop court (${header.size} < $minHeaderSize)" }
+        val probeLimit = minOf(METADATA_PROBE_BYTES, upload.size).toInt()
+        val prefix = raw.readNBytes(probeLimit)
+        if (prefix.size < minHeaderSize) {
+            log.warn { "ingest[image]: en-tête trop court (${prefix.size} < $minHeaderSize)" }
             throw CoreException.InvalidFormat(KIND)
         }
-        log.debug { "ingest[image]: header lu (${header.size} o)" }
+        log.debug { "ingest[image]: préfixe lu (${prefix.size} o)" }
 
-        val format = imageMimeSniffer.sniffImage(header) ?: run {
-            log.warn { "ingest[image]: magic bytes non reconnus (header=${header.size} o)" }
+        val format = imageMimeSniffer.sniffImage(prefix) ?: run {
+            log.warn { "ingest[image]: magic bytes non reconnus (prefix=${prefix.size} o)" }
             throw CoreException.InvalidFormat(KIND)
         }
         log.debug { "ingest[image]: format sniffé mime=${format.mime}" }
 
-        val guard = imageIoMetadataReader.read(header.inputStream(), format)
+        val guard = imageIoMetadataReader.read(ByteArrayInputStream(prefix), format)
             .requireDecodeBudget()
         log.debug {
             "ingest[image]: garde-fou OK (${guard.dimensions.width}x${guard.dimensions.height}, " +
                 "pixels=${guard.dimensions.totalPixels})"
         }
 
-        val full = SequenceInputStream(header.inputStream(), raw)
+        val full = SequenceInputStream(ByteArrayInputStream(prefix), raw)
         val hashing = HashingInputStream(full)
         val counting = CountingInputStream(hashing, props.maxSizeBytes)
 
@@ -106,5 +108,7 @@ class FileIngestor(
 
     companion object {
         private const val KIND = "image"
+        /** JPEG : EXIF peut repousser le marqueur SOF bien au-delà de 512 o (sniff SVG). */
+        private const val METADATA_PROBE_BYTES = 512 * 1024L
     }
 }

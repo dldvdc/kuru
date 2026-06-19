@@ -3,8 +3,11 @@ package com.project.kuru.reach.file.image
 import com.project.kuru.core.CoreException
 import com.project.kuru.core.Dimension
 import com.project.kuru.reach.mime.image.ImageFormat
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.InputStream
 import javax.imageio.ImageIO
+
+private val log = KotlinLogging.logger {}
 
 class ImageIoMetadataReader {
 
@@ -22,6 +25,7 @@ class ImageIoMetadataReader {
                 }
             }
         } catch (e: Exception) {
+            log.debug(e) { "ingest[image-io]: échec lecture dimensions mime=${format.mime}" }
             CoreException.invalidFormat("image", e)
         }
 }
