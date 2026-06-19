@@ -6,8 +6,8 @@ import com.project.kuru.screen.ingest.ImageIngestor
 import com.project.kuru.screen.mapper.PartVideoMapper
 import com.project.kuru.screen.multipart.UploadSpec
 import com.project.kuru.screen.multipart.UploadedFilePart
-import com.project.kuru.screen.multipart.runUploadPreflight
-import com.project.kuru.screen.multipart.selectMultipartPart
+import com.project.kuru.screen.multipart.parse
+import com.project.kuru.screen.multipart.extractPart
 import com.project.kuru.screen.multipart.validatePreflight
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,7 +22,7 @@ private val log = KotlinLogging.logger {}
 class Handler(
     private val uploadImage: UploadImage,
     private val uploadVideo: UploadVideo,
-    private val imageIngestor: ImageIngestor,
+    private val imageStager: ImageIngestor,
     private val partVideoMapper: PartVideoMapper,
     @Qualifier("imageUploadSpec") private val imageUploadSpec: UploadSpec,
     @Qualifier("videoUploadSpec") private val videoUploadSpec: UploadSpec,
@@ -32,38 +32,34 @@ class Handler(
         ServerResponse.ok().build()
 
     fun uploadImage(req: ServerRequest): ServerResponse {
-        log.debug { "handler[image]: début POST /uploads/image" }
-        val part = req.selectMultipartPart(imageUploadSpec.field)
+
+        val part = req.extractPart(imageUploadSpec.field)
+
         try {
-            val validated = part.validatePreflight(imageUploadSpec)
-            log.debug { "handler[image]: preflight OK → ingest (file=${validated.fileName.value})" }
+            val upload = part.validatePreflight(imageUploadSpec)
+            val staged = imageStager.stage(upload)
 
-            val accepted = imageIngestor.accept(validated)
-            log.debug {
-                "handler[image]: ingest OK → commit (stagingKey=${accepted.stagingKey}, " +
-                    "mime=${accepted.entry.mime}, size=${accepted.entry.sizeBytes})"
-            }
+            uploadImage(UploadImage.Cmd(staged))
+            log.info { "image upload accepted: ${staged.entry.originalFileName}" }
 
-            uploadImage(UploadImage.Cmd(accepted))
-            log.info { "handler[image]: 202 Accepted (file=${accepted.entry.originalFileName})" }
             return ServerResponse.status(HttpStatus.ACCEPTED).build()
-        } catch (e: Exception) {
-            log.warn(e) { "handler[image]: échec upload" }
-            throw e
+
         } finally {
             runCatching { part.delete() }
-                .onFailure { e -> log.debug(e) { "handler[image]: suppression part multipart" } }
         }
     }
 
     fun uploadVideo(req: ServerRequest): ServerResponse {
-        val part = req.selectMultipartPart(videoUploadSpec.field)
+
+        val part = req.extractPart(videoUploadSpec.field)
+
         try {
-            part.runUploadPreflight(videoUploadSpec)
+            part.parse(videoUploadSpec)
             return UploadedFilePart.from(part).use { uploaded ->
                 uploadVideo(UploadVideo.Cmd(partVideoMapper.fromUpload(uploaded)))
                 ServerResponse.status(HttpStatus.ACCEPTED).build()
             }
+
         } finally {
             runCatching { part.delete() }
         }

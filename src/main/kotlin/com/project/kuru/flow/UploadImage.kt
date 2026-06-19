@@ -3,9 +3,10 @@ package com.project.kuru.flow
 import com.github.f4b6a3.tsid.TsidCreator
 import com.project.kuru.core.toHexString
 import com.project.kuru.flow.image.AcceptedImage
-import com.project.kuru.reach.storage.StagingStore
+import com.project.kuru.store.StagingStore
 import com.project.kuru.store.ObjectKeys
 import com.project.kuru.store.UploadedObjectRepository
+import com.project.kuru.store.ImageStore
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 

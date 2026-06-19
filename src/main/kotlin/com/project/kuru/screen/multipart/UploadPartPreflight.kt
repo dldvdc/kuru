@@ -8,21 +8,19 @@ import jakarta.servlet.http.Part
 private val log = KotlinLogging.logger {}
 
 /** Validations metadata sans ouvrir le stream. */
-fun Part.runUploadPreflight(spec: UploadSpec) {
+fun Part.parse(spec: UploadSpec) {
     log.debug {
         "preflight[$spec.field]: début (size=$size, type=$contentType, file=$submittedFileName)"
     }
-
     requireKnownSize(spec)
     requireContentTypeHint(spec)
     requireFileName(spec)
-
     log.debug { "preflight[${spec.field}]: metadata OK (size=$size)" }
 }
 
 /** Validations puis construction de [ValidatedUpload] (ouvre le stream). */
 fun Part.validatePreflight(spec: UploadSpec): ValidatedUpload {
-    runUploadPreflight(spec)
+    parse(spec)
 
     val rawName = submittedFileName!!
     val validated = ValidatedUpload(

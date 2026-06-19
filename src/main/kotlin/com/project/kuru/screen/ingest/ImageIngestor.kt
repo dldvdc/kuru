@@ -5,6 +5,5 @@ import com.project.kuru.screen.multipart.ValidatedUpload
 
 /** Port screen → reach : consomme un upload pré-validé, retourne une image acceptée. */
 fun interface ImageIngestor {
-
-    fun accept(upload: ValidatedUpload): AcceptedImage
+    fun stage(upload: ValidatedUpload): AcceptedImage
 }

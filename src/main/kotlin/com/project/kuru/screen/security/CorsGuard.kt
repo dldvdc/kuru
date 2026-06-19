@@ -1,4 +1,4 @@
-package com.project.kuru.screen
+package com.project.kuru.screen.security
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-class WebCorsConfig(
+class CorsGuard(
     @Value("\${spring.kuru.cors.allowed-origins}")
     private val allowedOriginsRaw: String,
 ) : WebMvcConfigurer {

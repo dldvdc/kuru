@@ -38,7 +38,6 @@ spring:
       max-size-bytes: 52428800
       max-memory-bytes: 536870912
       bytes-per-pixel-estimate: 4
-      buffer-size: 8192
     storage:
       endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
       access-key: ${STORAGE_ACCESS_KEY:minio}

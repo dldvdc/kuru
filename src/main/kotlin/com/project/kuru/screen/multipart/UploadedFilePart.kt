@@ -6,7 +6,6 @@ import jakarta.servlet.http.Part
 import java.io.Closeable
 import java.io.InputStream
 
-/** Adaptateur Part servlet → [IncomingUpload]. Cycle de vie fermé par reach (ingestor). */
 class UploadedFilePart private constructor(
     private val part: Part,
 ) : IncomingUpload, Closeable {

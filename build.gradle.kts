@@ -27,7 +27,6 @@ repositories {
 dependencies {
 
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-	implementation("io.github.rctcwyvrn:blake3:1.3")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
@@ -44,12 +43,6 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-}
-
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
-	}
 }
 
 /** sqlite-jdbc charge une lib native via System::load ; requis depuis les JVM qui restreignent l’accès natif. */

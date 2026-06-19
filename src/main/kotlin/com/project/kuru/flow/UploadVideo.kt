@@ -5,6 +5,7 @@ import com.project.kuru.flow.video.SubmittedVideo
 import com.project.kuru.reach.hash.Sha256Hasher
 import com.project.kuru.store.ObjectKeys
 import com.project.kuru.store.UploadedObjectRepository
+import com.project.kuru.store.VideoStore
 import org.springframework.stereotype.Service
 
 @Service

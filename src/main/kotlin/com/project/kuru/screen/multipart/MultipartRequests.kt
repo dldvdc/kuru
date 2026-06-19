@@ -7,7 +7,7 @@ import org.springframework.web.servlet.function.ServerRequest
 
 private val log = KotlinLogging.logger {}
 
-fun ServerRequest.selectMultipartPart(partName: String): Part {
+fun ServerRequest.extractPart(partName: String): Part {
     log.debug { "multipart: lecture des parts, champ attendu='$partName'" }
 
     val allParts = runCatching { servletRequest().parts.toList() }

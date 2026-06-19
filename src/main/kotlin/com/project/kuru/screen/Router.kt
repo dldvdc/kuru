@@ -7,16 +7,18 @@ import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.router
 
 @Configuration
-class Router (private val handler: Handler) {
+class Router () {
+
 
     @Bean
-    fun uploadRoutes(): RouterFunction<ServerResponse> =
+    fun uploadRoutes(handler: Handler): RouterFunction<ServerResponse> =
 
         router {
             GET("/test", handler::test)
             "/uploads".nest {
                 POST("/image", handler::uploadImage)
                 POST("/video", handler::uploadVideo)
+                POST("/ref")
             }
         }
 
